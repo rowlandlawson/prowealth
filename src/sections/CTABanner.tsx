@@ -6,7 +6,14 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function CTABanner() {
+interface CTABannerProps {
+  heading?: string;
+  subtext?: string;
+  buttonText?: string;
+  whatsappLink?: string;
+}
+
+export default function CTABanner({ heading, subtext, buttonText, whatsappLink }: CTABannerProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
@@ -99,12 +106,10 @@ export default function CTABanner() {
               margin: 0,
               opacity: 0,
               maxWidth: '800px',
+              whiteSpace: 'pre-line',
             }}
           >
-            Your next favourite
-            <br />
-            outfit is one{' '}
-            <em style={{ color: '#D4AF37', fontStyle: 'italic' }}>message</em> away.
+            {heading || `Your next favourite\noutfit is one message away.`}
           </h2>
 
           {/* Bottom row: body + CTAs */}
@@ -135,9 +140,10 @@ export default function CTABanner() {
                   color: 'rgba(245,242,236,0.55)',
                   lineHeight: 1.8,
                   margin: 0,
+                  whiteSpace: 'pre-line',
                 }}
               >
-                Shop our ready-to-wear collection or <strong>book a session</strong> for professional measurements and custom sewing.
+                {subtext || "Shop our ready-to-wear collection or book a session for professional measurements and custom sewing."}
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#D4AF37' }}></span>
@@ -156,7 +162,7 @@ export default function CTABanner() {
             >
               
               <a
-                href="https://wa.me/2349046319498"
+                href={whatsappLink || "https://wa.me/2349046319498"}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -184,7 +190,7 @@ export default function CTABanner() {
                   e.currentTarget.style.color = '#0A0A0A';
                 }}
               >
-                Book a Session or Shop
+                {buttonText || "Book a Session or Shop"}
                 <span aria-hidden>{'\u2192'}</span>
               </a>
 

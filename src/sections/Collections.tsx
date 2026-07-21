@@ -3,50 +3,21 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Product } from '@/generated/prisma/client';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const collections = [
-  {
-    id: 1,
-    name: 'Dresses',
-    tag: '01',
-    description: 'From flowing bubu gowns to elegant tailored silhouettes. Versatile pieces for the modern woman.',
-    image: 'https://res.cloudinary.com/drpwe6wjp/image/upload/v1781541425/ChatGPT_Image_Jun_15_2026_05_18_42_PM_a9cwgz.png',
-    whatsapp: 'https://wa.me/2349046319498?text=Hi%2C%20I%27m%20interested%20in%20your%20Dresses',
-  },
-  {
-    id: 2,
-    name: 'Designer Perfumes',
-    tag: '02',
-    description: 'Luxury fragrances that leave a lasting impression. Curated from the finest houses.',
-    image: 'https://res.cloudinary.com/drpwe6wjp/image/upload/v1782234539/45k_vd7bsz.jpg',
-    whatsapp: 'https://wa.me/2349046319498?text=Hi%2C%20I%27m%20interested%20in%20your%20Designer%20Perfumes',
-  },
-  {
-    id: 3,
-    name: 'Designer Bags',
-    tag: '03',
-    description: 'Premium structured totes and chic crossbody bags. The ultimate statement accessory.',
-    image: 'https://res.cloudinary.com/drpwe6wjp/image/upload/v1782235068/bag45k_xogy9b.jpg',
-    whatsapp: 'https://wa.me/2349046319498?text=Hi%2C%20I%27m%20interested%20in%20your%20Bags',
-  },
-  {
-    id: 4,
-    name: 'Accessories',
-    tag: '04',
-    description: 'The finishing touch. Handpicked jewelry and statement pieces to complete any look.',
-    image: 'https://res.cloudinary.com/drpwe6wjp/image/upload/v1781541419/ChatGPT_Image_Jun_15_2026_05_22_35_PM_ypwikf.png',
-    whatsapp: 'https://wa.me/2349046319498?text=Hi%2C%20I%27m%20interested%20in%20your%20Accessories',
-  },
-];
+interface CollectionsProps {
+  products: Product[];
+  heading?: string;
+  subheading?: string;
+}
 
-export default function Collections() {
+export default function Collections({ products, heading, subheading }: CollectionsProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Header animation
     if (headerRef.current) {
       gsap.fromTo(
         headerRef.current.querySelectorAll('.hdr'),
@@ -62,7 +33,6 @@ export default function Collections() {
       );
     }
 
-    // Each card animates in as it enters
     const cards = document.querySelectorAll('.col-card');
     cards.forEach((card) => {
       gsap.fromTo(
@@ -82,7 +52,10 @@ export default function Collections() {
     return () => {
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, []);
+  }, [products]);
+
+  // Use up to 4 featured products
+  const featured = products.slice(0, 4);
 
   return (
     <section
@@ -96,8 +69,6 @@ export default function Collections() {
       }}
     >
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-
-        {/* Section header */}
         <div
           ref={headerRef}
           style={{
@@ -122,7 +93,7 @@ export default function Collections() {
                 opacity: 0,
               }}
             >
-              What We Offer
+              {subheading || "What We Offer"}
             </p>
             <h2
               className="hdr"
@@ -136,13 +107,11 @@ export default function Collections() {
                 opacity: 0,
               }}
             >
-              The Collection
+              {heading || "The Collection"}
             </h2>
           </div>
           <a
-            href="https://wa.me/2349046319498"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/shop"
             className="hdr"
             style={{
               fontFamily: "'Inter', sans-serif",
@@ -164,7 +133,6 @@ export default function Collections() {
           </a>
         </div>
 
-        {/* Cards grid */}
         <div
           style={{
             display: 'grid',
@@ -172,124 +140,120 @@ export default function Collections() {
             gap: 'clamp(16px, 2.5vw, 28px)',
           }}
         >
-          {collections.map((item) => (
-            <a
-              key={item.id}
-              href={item.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="col-card"
-              style={{
-                display: 'block',
-                textDecoration: 'none',
-                opacity: 0,
-              }}
-            >
-              {/* Image */}
-              <div
-                style={{
-                  position: 'relative',
-                  aspectRatio: '3/4',
-                  overflow: 'hidden',
-                  borderRadius: '4px',
-                  background: '#111',
-                }}
+          {featured.map((item, index) => {
+            const whatsAppLink = `https://wa.me/2349046319498?text=${encodeURIComponent(`Hi, I'm interested in your ${item.name}`)}`;
+            
+            return (
+              <a
+                key={item.id}
+                href={whatsAppLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="col-card"
+                style={{ display: 'block', textDecoration: 'none', opacity: 0 }}
               >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
-                    transition: 'transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  }}
-                  className="col-img"
-                />
-                {/* Overlay on hover */}
                 <div
-                  className="col-overlay"
                   style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'rgba(10,9,8,0.45)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    opacity: 0,
-                    transition: 'opacity 0.4s ease',
+                    position: 'relative',
+                    aspectRatio: '3/4',
+                    overflow: 'hidden',
+                    borderRadius: '4px',
+                    background: '#111',
                   }}
                 >
-                  <span
+                  <img
+                    src={item.image}
+                    alt={item.name}
                     style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontSize: '12px',
-                      letterSpacing: '0.2em',
-                      textTransform: 'uppercase',
-                      color: '#F5F2EC',
-                      paddingBottom: '6px',
-                      borderBottom: '1px solid rgba(245,242,236,0.6)',
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block',
+                      transition: 'transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    }}
+                    className="col-img"
+                  />
+                  <div
+                    className="col-overlay"
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'rgba(10,9,8,0.45)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      opacity: 0,
+                      transition: 'opacity 0.4s ease',
                     }}
                   >
-                    Enquire Now
+                    <span
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: '12px',
+                        letterSpacing: '0.2em',
+                        textTransform: 'uppercase',
+                        color: '#F5F2EC',
+                        paddingBottom: '6px',
+                        borderBottom: '1px solid rgba(245,242,236,0.6)',
+                      }}
+                    >
+                      Enquire Now
+                    </span>
+                  </div>
+
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '16px',
+                      left: '16px',
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '11px',
+                      letterSpacing: '0.15em',
+                      color: 'rgba(245,242,236,0.9)',
+                      background: 'rgba(0,0,0,0.5)',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    0{index + 1}
                   </span>
                 </div>
 
-                {/* Tag number */}
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: '16px',
-                    left: '16px',
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: '11px',
-                    letterSpacing: '0.15em',
-                    color: 'rgba(245,242,236,0.6)',
-                  }}
-                >
-                  {item.tag}
-                </span>
-              </div>
-
-              {/* Text below card */}
-              <div style={{ marginTop: '16px' }}>
-                <h3
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontSize: 'clamp(18px, 2vw, 22px)',
-                    fontWeight: 500,
-                    color: '#F5F2EC',
-                    margin: '0 0 6px 0',
-                  }}
-                >
-                  {item.name}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: '13px',
-                    fontWeight: 300,
-                    color: 'rgba(245,242,236,0.55)',
-                    lineHeight: 1.65,
-                    margin: 0,
-                  }}
-                >
-                  {item.description}
-                </p>
-              </div>
-            </a>
-          ))}
+                <div style={{ marginTop: '16px' }}>
+                  <h3
+                    style={{
+                      fontFamily: "'Playfair Display', serif",
+                      fontSize: 'clamp(18px, 2vw, 22px)',
+                      fontWeight: 500,
+                      color: '#F5F2EC',
+                      margin: '0 0 6px 0',
+                    }}
+                  >
+                    {item.name}
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '13px',
+                      fontWeight: 300,
+                      color: 'rgba(245,242,236,0.55)',
+                      lineHeight: 1.65,
+                      margin: 0,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {item.description}
+                  </p>
+                </div>
+              </a>
+            );
+          })}
         </div>
 
-        {/* Divider */}
-        <div
-          style={{
-            marginTop: 'clamp(60px, 8vw, 100px)',
-            height: '1px',
-            background: 'rgba(245,242,236,0.08)',
-          }}
-        />
+        <div style={{ marginTop: 'clamp(60px, 8vw, 100px)', height: '1px', background: 'rgba(245,242,236,0.08)' }} />
       </div>
 
       <style>{`

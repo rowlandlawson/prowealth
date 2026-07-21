@@ -1,15 +1,20 @@
+"use client";
+
 import { useState, useMemo, useEffect } from 'react';
-import { products } from '../data/products';
+import { Product } from '@/generated/prisma/client';
 import { ProductModal } from '../components/ProductModal';
 import { useCart } from '../context/CartContext';
 import { ShoppingBag, Eye, Search, X } from 'lucide-react';
-
 
 type Category = 'All' | 'Perfumes' | 'Accessories' | 'Dresses' | 'Bags';
 
 const categories: Category[] = ['All', 'Dresses', 'Perfumes', 'Bags', 'Accessories'];
 
-export default function Shop() {
+interface ShopProps {
+  products: Product[];
+}
+
+export default function Shop({ products }: ShopProps) {
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const { addToCart } = useCart();
@@ -22,7 +27,7 @@ export default function Shop() {
         product.description.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, products]);
 
   return (
     <div

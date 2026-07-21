@@ -1,75 +1,75 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Testimonial } from '@/generated/prisma/client';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const testimonials = [
-  {
-    quote:
-      "I've been buying from Prowealth for over a year. The quality is unmatched and the prices are so affordable. Their bubu gowns always get me compliments!",
-    name: 'Ada M.',
-    location: 'Port Harcourt',
-    index: '01',
-  },
-  {
-    quote:
-      'As a student, I thought luxury fashion was out of reach. Prowealth proved me wrong. I look expensive without spending a fortune.',
-    name: 'Chioma O.',
-    location: 'Lagos',
-    index: '02',
-  },
-  {
-    quote:
-      "I ordered perfumes and a bag. They arrived the next day in perfect condition. The scent lasts all day people always ask what I'm wearing!",
-    name: 'Nneka E.',
-    location: 'Abuja',
-    index: '03',
-  },
-];
+interface TestimonialsProps {
+  testimonials: Testimonial[];
+}
 
-export default function Testimonials() {
+export default function Testimonials({ testimonials }: TestimonialsProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 3;
+  const maxPage = Math.ceil(testimonials.length / itemsPerPage) - 1;
 
   useEffect(() => {
     const header = headerRef.current;
-    const cards = cardsRef.current;
-    if (!header || !cards) return;
-
-    gsap.fromTo(
-      header.querySelectorAll('.hdr'),
-      { opacity: 0, y: 24 },
-      {
-        opacity: 1, y: 0, stagger: 0.12, duration: 0.9, ease: 'power3.out',
-        scrollTrigger: {
-          trigger: header,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
-      }
-    );
-
-    gsap.fromTo(
-      cards.querySelectorAll('.t-card'),
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1, y: 0, stagger: 0.15, duration: 0.9, ease: 'power3.out',
-        scrollTrigger: {
-          trigger: cards,
-          start: 'top 78%',
-          toggleActions: 'play none none none',
-        },
-      }
-    );
-
+    
+    if (header) {
+      gsap.fromTo(
+        header.querySelectorAll('.hdr'),
+        { opacity: 0, y: 24 },
+        {
+          opacity: 1, y: 0, stagger: 0.12, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: {
+            trigger: header,
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    }
+    
     return () => {
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
+
+  useEffect(() => {
+    // Re-animate cards when page changes
+    const cards = cardsRef.current;
+    if (cards) {
+      gsap.fromTo(
+        cards.querySelectorAll('.t-card'),
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, stagger: 0.15, duration: 0.6, ease: 'power3.out' }
+      );
+    }
+  }, [currentPage, testimonials]);
+
+  const displayedTestimonials = testimonials.length > 3
+    ? testimonials.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
+    : testimonials;
+
+  const handlePrev = () => {
+    setCurrentPage(prev => Math.max(0, prev - 1));
+  };
+  
+  const handleNext = () => {
+    setCurrentPage(prev => Math.min(maxPage, prev + 1));
+  };
+
+  // If there are no testimonials at all, hide section
+  if (testimonials.length === 0) return null;
 
   return (
     <section
@@ -126,21 +126,64 @@ export default function Testimonials() {
               Worn. Loved. Repeated.
             </h2>
           </div>
-          <p
-            className="hdr"
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '13px',
-              fontWeight: 300,
-              color: 'rgba(245,242,236,0.45)',
-              maxWidth: '260px',
-              lineHeight: 1.7,
-              margin: 0,
-              opacity: 0,
-            }}
-          >
-            Real words from real customers across Nigeria.
-          </p>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '16px' }}>
+            <p
+              className="hdr"
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '13px',
+                fontWeight: 300,
+                color: 'rgba(245,242,236,0.45)',
+                maxWidth: '260px',
+                lineHeight: 1.7,
+                margin: 0,
+                opacity: 0,
+                textAlign: 'right',
+              }}
+            >
+              Real words from real customers across Nigeria.
+            </p>
+            
+            {/* Arrows if > 3 */}
+            {testimonials.length > 3 && (
+              <div
+                className="hdr"
+                style={{ display: 'flex', gap: '12px', opacity: 0 }}
+              >
+                <button
+                  onClick={handlePrev}
+                  disabled={currentPage === 0}
+                  style={{
+                    width: '40px', height: '40px', borderRadius: '50%',
+                    background: currentPage === 0 ? 'transparent' : 'rgba(245,242,236,0.05)',
+                    border: '1px solid rgba(245,242,236,0.1)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: currentPage === 0 ? 'not-allowed' : 'pointer',
+                    color: currentPage === 0 ? 'rgba(245,242,236,0.2)' : '#D4AF37',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button
+                  onClick={handleNext}
+                  disabled={currentPage === maxPage}
+                  style={{
+                    width: '40px', height: '40px', borderRadius: '50%',
+                    background: currentPage === maxPage ? 'transparent' : 'rgba(245,242,236,0.05)',
+                    border: '1px solid rgba(245,242,236,0.1)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: currentPage === maxPage ? 'not-allowed' : 'pointer',
+                    color: currentPage === maxPage ? 'rgba(245,242,236,0.2)' : '#D4AF37',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Cards */}
@@ -153,9 +196,9 @@ export default function Testimonials() {
             border: '1px solid rgba(245,242,236,0.08)',
           }}
         >
-          {testimonials.map((t) => (
+          {displayedTestimonials.map((t, index) => (
             <div
-              key={t.index}
+              key={t.id}
               className="t-card"
               style={{
                 padding: 'clamp(28px, 4vw, 48px)',
@@ -186,8 +229,15 @@ export default function Testimonials() {
                     marginBottom: '20px',
                   }}
                 >
-                  {t.index}
+                  0{currentPage * itemsPerPage + index + 1}
                 </span>
+                
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '16px' }}>
+                  {[1,2,3,4,5].map(star => (
+                    <span key={star} style={{ color: star <= t.rating ? '#D4AF37' : '#333', fontSize: '14px' }}>★</span>
+                  ))}
+                </div>
+
                 <p
                   style={{
                     fontFamily: "'Playfair Display', serif",
@@ -199,7 +249,7 @@ export default function Testimonials() {
                     margin: 0,
                   }}
                 >
-                  &ldquo;{t.quote}&rdquo;
+                  &ldquo;{t.content}&rdquo;
                 </p>
               </div>
 
@@ -230,7 +280,7 @@ export default function Testimonials() {
                       letterSpacing: '0.04em',
                     }}
                   >
-                    {t.name}
+                    {t.authorName}
                   </p>
                   <p
                     style={{

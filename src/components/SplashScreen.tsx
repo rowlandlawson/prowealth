@@ -53,19 +53,6 @@ export default function SplashScreen({
         pointerEvents: fadeOut ? "none" : "auto",
       }}
     >
-      {/* Subtle radial glow behind logo */}
-      <div
-        style={{
-          position: "absolute",
-          width: "340px",
-          height: "340px",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }}
-      />
-
       {/* Brand name */}
       <div
         style={{
@@ -119,11 +106,9 @@ export default function SplashScreen({
           style={{
             height: "100%",
             width: `${progress}%`,
-            background:
-              "linear-gradient(90deg, #D4AF37, #E8C96A)",
+            background: "#D4AF37",
             borderRadius: "2px",
             transition: "width 0.1s linear",
-            boxShadow: "0 0 12px rgba(212,175,55,0.4)",
           }}
         />
       </div>

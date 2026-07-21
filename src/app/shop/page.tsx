@@ -1,7 +1,12 @@
-"use client";
-
+import { db } from "@/lib/db";
 import Shop from '../../components/Shop';
 
-export default function ShopPage() {
-  return <Shop />;
+export const dynamic = "force-dynamic";
+
+export default async function ShopPage() {
+  const products = await db.product.findMany({
+    orderBy: { createdAt: "desc" }
+  });
+
+  return <Shop products={products} />;
 }

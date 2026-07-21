@@ -6,7 +6,13 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function BrandStory() {
+interface BrandStoryProps {
+  heading?: string;
+  text?: string;
+  image?: string;
+}
+
+export default function BrandStory({ heading, text, image }: BrandStoryProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
@@ -91,8 +97,7 @@ export default function BrandStory() {
               margin: 0,
             }}
           >
-            Fashion that speaks{' '}
-            <em style={{ color: '#D4AF37', fontStyle: 'italic' }}>confidence</em>
+            {heading || "Fashion that speaks confidence"}
           </h2>
           <p
             className="animate-in"
@@ -104,9 +109,10 @@ export default function BrandStory() {
               lineHeight: 1.75,
               marginTop: 'clamp(20px, 3vw, 32px)',
               maxWidth: '520px',
+              whiteSpace: 'pre-line',
             }}
           >
-            Prowealth Fashion House was born from a simple belief: every woman deserves to feel luxurious without breaking the bank. What started as a small passion project in Port Harcourt has grown into a trusted destination for ready-to-wear African fashion. We design and source the finest bubu gowns, dresses, perfumes, shoes, and accessories all curated to make you look and feel your absolute best.
+            {text || "Prowealth Fashion House was born from a simple belief: every woman deserves to feel luxurious without breaking the bank. What started as a small passion project in Port Harcourt has grown into a trusted destination for ready-to-wear African fashion. We design and source the finest bubu gowns, dresses, perfumes, shoes, and accessories all curated to make you look and feel your absolute best."}
           </p>
         </div>
         <div
@@ -118,8 +124,8 @@ export default function BrandStory() {
           }}
         >
           <img
-            src="https://res.cloudinary.com/drpwe6wjp/image/upload/v1781541418/ChatGPT_Image_Jun_15_2026_05_23_17_PM_vayosa.png"
-            alt="Exclusive Prowealth hand-finished luxury dress"
+            src={image || "https://res.cloudinary.com/drpwe6wjp/image/upload/v1781541418/ChatGPT_Image_Jun_15_2026_05_23_17_PM_vayosa.png"}
+            alt="Prowealth Luxury Brand Story"
             style={{
               width: '100%',
               borderRadius: '4px',

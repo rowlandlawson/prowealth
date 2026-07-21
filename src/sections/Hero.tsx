@@ -6,7 +6,15 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Hero() {
+interface HeroProps {
+  heading: string;
+  subtext: string;
+  image: string;
+  ctaText: string;
+  ctaLink: string;
+}
+
+export default function Hero({ heading, subtext, image, ctaText, ctaLink }: HeroProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
@@ -68,7 +76,7 @@ export default function Hero() {
     };
   }, []);
 
-  const headline = 'Luxury Within Reach';
+  const headline = heading || 'Luxury Within Reach';
 
   return (
     <section
@@ -93,8 +101,8 @@ export default function Hero() {
         }}
       >
         <img
-          src="https://res.cloudinary.com/drpwe6wjp/image/upload/v1781541420/ChatGPT_Image_Jun_15_2026_05_21_11_PM_p6adw3.png"
-          alt="Elegant premium dress from Prowealth Fashion House"
+          src={image || "https://res.cloudinary.com/drpwe6wjp/image/upload/v1781541420/ChatGPT_Image_Jun_15_2026_05_21_11_PM_p6adw3.png"}
+          alt="Premium background from Prowealth Fashion House"
           style={{
             width: '100%',
             height: '100%',
@@ -157,21 +165,6 @@ export default function Hero() {
             maxWidth: '900px',
           }}
         >
-          {/* <div
-            ref={labelRef}
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '13px',
-              letterSpacing: '0.25em',
-              textTransform: 'uppercase',
-              color: '#D9B65C',
-              marginBottom: '20px',
-              opacity: 0,
-            }}
-          >
-            New Season Ready to Wear
-          </div> */}
-
           <h1
             ref={headlineRef}
             style={{
@@ -200,14 +193,6 @@ export default function Hero() {
 
           <div
             ref={lineRef}
-            // style={{
-            //   marginTop: '28px',
-            //   height: '1px',
-            //   width: '100%',
-            //   maxWidth: '480px',
-            //   background: 'rgba(245,242,236,0.3)',
-            //   transformOrigin: 'left',
-            // }}
           />
 
           <p
@@ -223,13 +208,12 @@ export default function Hero() {
               opacity: 0,
             }}
           >
-            Curated bubu gowns, designer fragrances and statement pieces
-            delivered.
+            {subtext || "Curated bubu gowns, designer fragrances and statement pieces delivered."}
           </p>
 
           <a
             ref={ctaRef}
-            href="https://wa.me/2349046319498"
+            href={ctaLink || "https://wa.me/2349046319498"}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -257,7 +241,7 @@ export default function Hero() {
               e.currentTarget.style.gap = '12px';
             }}
           >
-            Shop the Collection
+            {ctaText || "Shop the Collection"}
             <span aria-hidden>→</span>
           </a>
         </div>
