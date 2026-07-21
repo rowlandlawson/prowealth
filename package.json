@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "bun run generate && next build",
+    "generate": "bun scripts/clean-prisma-client.mjs && prisma generate",
     "start": "next start",
     "lint": "eslint"
   },

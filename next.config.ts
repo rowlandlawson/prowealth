@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   turbopack: {
-    root: "C:/Users/Administrator/Documents/ROWLAND/prowealth", // absolute path to project root
+    root: process.cwd(),
   },
   images: {
     remotePatterns: [
